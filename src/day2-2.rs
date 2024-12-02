@@ -4,28 +4,42 @@ use std::{
 };
 
 fn is_safe(report: &Vec<u8>) -> bool {
-    let mut report = report.iter();
-    let e = report.next().unwrap();
-    let mut prev = report.next().unwrap();
+    let mut report_iter = report.iter();
+    let mut prev = report_iter.next().unwrap();
 
-    let cmp = if e < prev { u8::le } else { u8::ge };
+    let mut cmp: fn(&u8, &u8) -> bool = u8::lt;
+    for (i, e) in report_iter.enumerate() {
+        if i == 0 {
+            cmp = if prev < e { u8::lt } else { u8::gt }
+        }
 
-    if e.abs_diff(*prev) == 0 || e.abs_diff(*prev) > 3 {
-        return false;
-        // the bad element is the second one (prev)
-    }
-
-    for e in report {
         if !cmp(prev, e) {
             return false;
         }
-        if e.abs_diff(*prev) == 0 || e.abs_diff(*prev) > 3 {
+
+        if prev.abs_diff(*e) > 3 {
             return false;
         }
+
         prev = e;
     }
-
     return true;
+}
+
+fn is_safe_err_correction(report: &Vec<u8>) -> bool {
+    let res = is_safe(report);
+    if !res {
+        for i in 0..report.len() {
+            let mut copy: Vec<u8> = report.iter().copied().collect();
+            copy.remove(i);
+            if is_safe(&copy) {
+                return true;
+            }
+        }
+        return false;
+    } else {
+        return true;
+    }
 }
 
 fn main() {
@@ -46,6 +60,13 @@ fn main() {
         reports.push(report);
     }
 
-    let count: u32 = reports.iter().map(is_safe).map(|e| e as u32).sum();
-    println!("{}", count);
+    let count1: usize = reports.iter().map(is_safe).filter(|r| *r).count();
+    println!("v1: {}", count1);
+
+    let count2: usize = reports
+        .iter()
+        .map(is_safe_err_correction)
+        .filter(|r| *r)
+        .count();
+    println!("v2: {}", count2);
 }
