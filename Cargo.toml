@@ -4,3 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+
+[[bin]]
+name="day1-1"
+path="src/day1-1.rs"
+[[bin]]
+name="day1-2"
+path="src/day1-2.rs"
