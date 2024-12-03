@@ -29,10 +29,8 @@ fn main() {
     }
     slices.push(data[start..].to_string());
 
-    let mut enabled = true;
-
     let mut results = Vec::new();
-
+    let mut enabled = true;
     for slice in slices {
         if enabled {
             let mults = mul_regex
@@ -44,12 +42,10 @@ fn main() {
                     let m = capture
                         .get(2)
                         .map_or(0, |m| m.as_str().parse().expect("failed to parse number"));
-                    // println!("{}*{}*{}", n, m, n * m);
                     n * m
                 })
                 .collect::<Vec<_>>();
 
-            // println!("{:?}", mults);
             results.extend(mults);
         }
         if slice.ends_with("do()") {
@@ -61,20 +57,4 @@ fn main() {
 
     let sum: u64 = results.iter().sum();
     println!("{}", sum);
-
-    // let mut results = Vec::new();
-
-    // for caps in regex.captures_iter(&data) {
-    //     let n = caps
-    //         .get(1)
-    //         .map_or(0, |m| m.as_str().parse().expect("failed to parse number"));
-    //     let m = caps
-    //         .get(2)
-    //         .map_or(0, |m| m.as_str().parse().expect("failed to parse number"));
-    //     results.push(n * m);
-    // }
-
-    // let sum: u64 = results.iter().sum();
-
-    // println!("{}", sum);
 }
