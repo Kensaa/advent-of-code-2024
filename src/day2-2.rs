@@ -30,7 +30,7 @@ fn is_safe_err_correction(report: &Vec<u8>) -> bool {
     let res = is_safe(report);
     if !res {
         for i in 0..report.len() {
-            let mut copy: Vec<u8> = report.iter().copied().collect();
+            let mut copy: Vec<u8> = report.clone();
             copy.remove(i);
             if is_safe(&copy) {
                 return true;
