@@ -1,7 +1,4 @@
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
+mod common;
 
 fn is_safe(report: &Vec<u8>) -> bool {
     let mut report_iter = report.iter();
@@ -43,12 +40,7 @@ fn is_safe_err_correction(report: &Vec<u8>) -> bool {
 }
 
 fn main() {
-    let input_file = File::open("inputs/day2.txt").expect("failed to open file");
-    let input_file = BufReader::new(input_file);
-    let lines: Vec<String> = input_file
-        .lines()
-        .map(|l| l.expect("failed to read line"))
-        .collect();
+    let lines = common::load_lines("inputs/day2.txt");
 
     let mut reports: Vec<Vec<u8>> = Vec::with_capacity(lines.len());
     for line in lines {

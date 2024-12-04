@@ -1,15 +1,7 @@
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
+mod common;
 
 fn main() {
-    let input_file = File::open("inputs/day1.txt").expect("failed to open file");
-    let input_file = BufReader::new(input_file);
-    let lines: Vec<String> = input_file
-        .lines()
-        .map(|l| l.expect("failed to read line"))
-        .collect();
+    let lines = common::load_lines("inputs/day1.txt");
 
     let mut list1: Vec<u32> = Vec::with_capacity(lines.len());
     let mut list2: Vec<u32> = Vec::with_capacity(lines.len());

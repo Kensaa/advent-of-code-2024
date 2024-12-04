@@ -1,18 +1,8 @@
 use regex::{self, Regex};
-use std::{
-    fs::File,
-    io::{BufReader, Read},
-};
-fn main() {
-    let input_file = File::open("inputs/day3.txt").expect("failed to open file");
-    let mut input_file = BufReader::new(input_file);
-    let mut data = Vec::new();
-    let _ = input_file
-        .read_to_end(&mut data)
-        .expect("failed to read file");
+mod common;
 
-    let mut data = String::from_utf8(data).expect("failed to convert to string");
-    data = data.replace("\n", "");
+fn main() {
+    let data = common::load_file("inputs/day3.txt");
 
     let mul_regex = Regex::new(r"mul\((0|\d{0,3}),(0|\d{0,3})\)").unwrap();
     let cond_regex = Regex::new(r"don't\(\)|do\(\)").unwrap();

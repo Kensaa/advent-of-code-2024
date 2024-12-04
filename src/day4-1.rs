@@ -1,14 +1,8 @@
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
+mod common;
 
 fn main() {
-    let input_file = File::open("inputs/day4.txt").expect("failed to open file");
-    let input_file = BufReader::new(input_file);
-    let lines: Vec<Vec<char>> = input_file
-        .lines()
-        .map(|l| l.expect("failed to read line"))
+    let grid: Vec<Vec<char>> = common::load_lines("inputs/day4.txt")
+        .into_iter()
         .map(|l| l.chars().collect())
         .collect();
 
@@ -24,8 +18,8 @@ fn main() {
 
     let target: Vec<char> = "XMAS".chars().collect();
 
-    let width = lines.get(0).unwrap().len() as i32;
-    let height = lines.len() as i32;
+    let width = grid.get(0).unwrap().len() as i32;
+    let height = grid.len() as i32;
     let mut count = 0;
     for x in 0..width {
         for y in 0..height {
@@ -39,14 +33,13 @@ fn main() {
                     && ty < height
                     && ty >= 0
                     && target_i < target.len()
-                    && lines[ty as usize][tx as usize] == target[target_i]
+                    && grid[ty as usize][tx as usize] == target[target_i]
                 {
                     target_i += 1;
                     tx = tx + dx;
                     ty = ty + dy;
                 }
                 if target_i == target.len() {
-                    // println!("found at {} {}, dir: {:?}", x, y, dir);
                     count += 1;
                 }
             }
