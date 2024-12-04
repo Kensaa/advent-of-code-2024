@@ -5,7 +5,7 @@ use std::{
 };
 
 fn main() {
-    let input_file = File::open("inputs/day1/input1.txt").expect("failed to open file");
+    let input_file = File::open("inputs/day1.txt").expect("failed to open file");
     let input_file = BufReader::new(input_file);
     let lines: Vec<String> = input_file
         .lines()
