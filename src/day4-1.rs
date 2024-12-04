@@ -39,7 +39,7 @@ fn main() {
                     && ty < height
                     && ty >= 0
                     && target_i < target.len()
-                    && lines[tx as usize][ty as usize] == target[target_i]
+                    && lines[ty as usize][tx as usize] == target[target_i]
                 {
                     target_i += 1;
                     tx = tx + dx;
