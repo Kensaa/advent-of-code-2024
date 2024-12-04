@@ -4,32 +4,25 @@ use std::{
 };
 
 fn is_safe(report: &Vec<u8>) -> bool {
-    let mut report = report.into_iter();
-    let e = report.next().unwrap();
-    let mut prev = report.next().unwrap();
+    let mut report_iter = report.iter();
+    let mut prev = report_iter.next().unwrap();
 
-    let op = if e < prev {
-        u8::le
-    } else if e > prev {
-        u8::ge
-    } else {
-        return false;
-    };
+    let mut cmp: fn(&u8, &u8) -> bool = u8::lt;
+    for (i, e) in report_iter.enumerate() {
+        if i == 0 {
+            cmp = if prev < e { u8::lt } else { u8::gt }
+        }
 
-    if e.abs_diff(*prev) == 0 || e.abs_diff(*prev) > 3 {
-        return false;
-    }
-
-    for e in report {
-        if !op(prev, e) {
+        if !cmp(prev, e) {
             return false;
         }
-        if e.abs_diff(*prev) == 0 || e.abs_diff(*prev) > 3 {
+
+        if prev.abs_diff(*e) > 3 {
             return false;
         }
+
         prev = e;
     }
-
     return true;
 }
 
