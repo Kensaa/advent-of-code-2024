@@ -7,15 +7,15 @@ use std::{
 #[allow(dead_code)]
 pub fn load_lines(default_file: &str) -> Vec<String> {
     let args: Vec<String> = args().collect();
-    let file = if let Some(file) = args.last() {
-        if fs::exists(file).unwrap() {
-            file
-        } else {
-            default_file
+    let mut file = default_file;
+    if args.len() >= 2 {
+        if let Some(f) = args.last() {
+            println!("{}", f);
+            if fs::exists(f).unwrap() {
+                file = f;
+            }
         }
-    } else {
-        default_file
-    };
+    }
 
     let input_file = File::open(file).expect("failed to open file");
     let input_file = BufReader::new(input_file);
