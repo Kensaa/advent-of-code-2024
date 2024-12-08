@@ -61,22 +61,22 @@ fn main() {
         }
     }
 
-    for y in 0..grid_height {
-        for x in 0..grid_width {
-            let c = grid[y as usize][x as usize];
-            let is_antinode = antinodes.contains(&(x, y));
-            if is_antinode {
-                if c != '.' {
-                    print!("{}{}", c, '^');
-                } else {
-                    print!("#");
-                }
-            } else {
-                print!("{}", c);
-            }
-        }
-        print!("\n");
-    }
+    // for y in 0..grid_height {
+    //     for x in 0..grid_width {
+    //         let c = grid[y as usize][x as usize];
+    //         let is_antinode = antinodes.contains(&(x, y));
+    //         if is_antinode {
+    //             if c != '.' {
+    //                 print!("{}{}", c, '^');
+    //             } else {
+    //                 print!("#");
+    //             }
+    //         } else {
+    //             print!("{}", c);
+    //         }
+    //     }
+    //     print!("\n");
+    // }
 
     println!("count: {}", antinodes.len())
 }
