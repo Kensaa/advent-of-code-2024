@@ -38,14 +38,38 @@ fn main() {
         })
         .collect();
 
-    // println!("{:?}", lines);
-    // println!("{:?}", order_lines);
-
-    let mut map = HashMap::new();
+    // the key is before every elements in the vec
+    let mut is_before: HashMap<u32, Vec<u32>> = HashMap::new();
     for order in order_lines {
-        
+        let l = is_before.entry(order.0).or_insert(Vec::new());
+        l.push(order.1);
     }
-    map.entry(key)
 
-    println!("{:?}", pages_lines);
+    let mut valid_lines: Vec<Vec<u32>> = Vec::new();
+
+    for line in pages_lines.iter() {
+        let mut valid = true;
+        for (i, e) in line.iter().enumerate() {
+            let e_is_before = is_before.get(&e).expect("value is not in the map");
+            for j in 0..i {
+                if e_is_before.contains(&line[j]) {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        if valid {
+            valid_lines.push(line.clone());
+        }
+    }
+
+    println!("{}", pages_lines.len());
+    println!("{}", valid_lines.len());
+
+    let sum: u32 = valid_lines
+        .into_iter()
+        .map(|line| line[line.len() / 2])
+        .sum();
+
+    println!("{}", sum);
 }
