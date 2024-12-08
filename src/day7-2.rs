@@ -22,12 +22,14 @@ fn main() {
         })
         .collect();
 
+    let operations = vec![Operation::ADD, Operation::MULT, Operation::CONCAT];
+
     let mut sum = 0;
     for line in lines {
         let inputs = line.0;
         let result = line.1;
 
-        if feur(inputs, result, 0) {
+        if ckeck_line(&operations, inputs, result, 0) {
             sum += result;
         }
     }
@@ -50,16 +52,21 @@ fn compute(a: u64, b: u64, operation: &Operation) -> u64 {
     }
 }
 
-fn feur(mut inputs: VecDeque<u64>, result: u64, curr: u64) -> bool {
+fn ckeck_line(
+    operations: &Vec<Operation>,
+    mut inputs: VecDeque<u64>,
+    result: u64,
+    curr: u64,
+) -> bool {
     if inputs.len() == 0 {
         return curr == result;
     }
 
     let next = inputs.pop_front().unwrap();
-    let operations = vec![Operation::ADD, Operation::MULT, Operation::CONCAT];
     return operations
         .iter()
         .map(|op| compute(curr, next, op))
-        .map(|i| feur(inputs.clone(), result, i))
+        .filter(|i| *i <= result)
+        .map(|i| ckeck_line(operations, inputs.clone(), result, i))
         .any(|r| r);
 }
