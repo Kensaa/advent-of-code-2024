@@ -91,18 +91,3 @@ fn gen_checksum(memory: &Vec<File>) -> u64 {
     }
     return checksum;
 }
-
-fn print_memory(memory: &Vec<File>) {
-    for file in memory {
-        if is_empty(file) {
-            for _ in 0..file.size {
-                print!(".");
-            }
-        } else {
-            for _ in 0..file.size {
-                print!("{}", file.id)
-            }
-        }
-    }
-    print!("\n");
-}
