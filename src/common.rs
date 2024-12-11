@@ -10,7 +10,6 @@ pub fn load_lines(default_file: &str) -> Vec<String> {
     let mut file = default_file;
     if args.len() >= 2 {
         if let Some(f) = args.last() {
-            println!("{}", f);
             if fs::exists(f).unwrap() {
                 file = f;
             }
@@ -32,7 +31,6 @@ pub fn load_file(default_file: &str) -> String {
     let mut file = default_file;
     if args.len() >= 2 {
         if let Some(f) = args.last() {
-            println!("{}", f);
             if fs::exists(f).unwrap() {
                 file = f;
             }
