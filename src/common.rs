@@ -21,6 +21,8 @@ pub fn load_lines(default_file: &str) -> Vec<String> {
     let lines: Vec<String> = input_file
         .lines()
         .map(|l| l.expect("failed to read line"))
+        .map(|l| l.trim().to_string())
+        .filter(|l| *l != "")
         .collect();
     return lines;
 }
@@ -45,6 +47,6 @@ pub fn load_file(default_file: &str) -> String {
         .read_to_end(&mut data)
         .expect("failed to read file");
     let mut data = String::from_utf8(data).expect("failed to convert to string");
-    data = data.replace("\n", "");
+    data = data.replace("\n", "").trim().to_string();
     return data;
 }
