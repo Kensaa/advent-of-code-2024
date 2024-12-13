@@ -34,6 +34,7 @@ fn main() {
         });
     }
 
+    let mut token_count = 0;
     for (i, machine) in machines.into_iter().enumerate() {
         println!("machine n°{}:", i);
         let res = solve(&machine);
@@ -43,9 +44,12 @@ fn main() {
             }
             Some((x, y)) => {
                 println!("x = {}, y = {}", x, y);
+                token_count += x * 3 + y;
             }
         }
     }
+
+    println!("token count : {}", token_count);
 }
 
 fn parse_line(s: String) -> (u64, u64) {
