@@ -11,7 +11,6 @@ fn main() {
         .map(|line| line.chars().collect::<Vec<char>>())
         .collect();
 
-    print_grid(&grid);
     let height = grid.len();
     let width = grid[0].len();
 
@@ -29,29 +28,13 @@ fn main() {
     }
 
     let mut total_price = 0;
-    // for region in regions {
-    let region = &regions[0];
-    let info = get_region_info(&region);
-    println!("region : {:?}", region);
-    println!("infos : {:?}", info);
-    println!();
-    let price = info.0 * info.1;
-    total_price += price;
-    // }
+    for region in regions {
+        let sides = get_region_sides(&region);
+        let price = region.len() * sides;
+        total_price += price;
+    }
 
     println!("total : {}", total_price);
-}
-
-fn print_grid(grid: &Grid) {
-    let height = grid.len();
-    let width = grid[0].len();
-
-    for y in 0..height {
-        for x in 0..width {
-            print!("{}", grid[y][x]);
-        }
-        print!("\n");
-    }
 }
 
 fn get_neighbors(x: i32, y: i32) -> Vec<(i32, i32)> {
@@ -97,60 +80,56 @@ fn explore(grid: &Grid, seen_cells: &mut HashSet<(usize, usize)>, x: i32, y: i32
 }
 
 fn region_cell_exists(region: &Region, x: i32, y: i32) -> bool {
-    if x < 0 || y == 0 {
+    if x < 0 || y < 0 {
         return false;
     }
     return region.contains(&(x as usize, y as usize));
 }
 
-/// Returns a tuple containing (area,corner)
-fn get_region_info(region: &Region) -> (usize, usize) {
+fn get_region_sides(region: &Region) -> usize {
     let mut corner = 0;
-    for cell in region.into_iter() {
+    for cell in region {
         let x = cell.0 as i32;
         let y = cell.1 as i32;
 
-        // there is 8 ways that a cell could be a corner :
-        // the 4 types of corners (┐,┌,┘,└)
-        // but each type of corner can be either convex (the angle points outwards, meaning that the rest of the region is "inside" the angle) or concave (the angle points inward)
-
         let top = region_cell_exists(region, x, y - 1);
         let right = region_cell_exists(region, x + 1, y);
-        let bottom = region_cell_exists(region, x, y - 1);
+        let bottom = region_cell_exists(region, x, y + 1);
         let left = region_cell_exists(region, x - 1, y);
-        let bottom_right = region_cell_exists(region, x + 1, y - 1);
-        let bottom_left = region_cell_exists(region, x - 1, y - 1);
-        let top_right = region_cell_exists(region, x + 1, y + 1);
-        let top_left = region_cell_exists(region, x - 1, y + 1);
+        let bottom_right = region_cell_exists(region, x + 1, y + 1);
+        let bottom_left = region_cell_exists(region, x - 1, y + 1);
+        let top_right = region_cell_exists(region, x + 1, y - 1);
+        let top_left = region_cell_exists(region, x - 1, y - 1);
 
-        let total_count = top as usize + right as usize + bottom as usize + left as usize;
-        if total_count == 2 {
-            // bottom left (┐)
-            if bottom && left {
-                println!("{},{} => ┐", x, y);
-                corner += 1;
-            }
-            // bottom right (┌)
-            if bottom && right {
-                println!("{},{} => ┌", x, y);
-                corner += 1;
-            }
-            // top left (┘)
-            if top && left {
-                println!("{},{} => ┘", x, y);
-                corner += 1;
-            }
-            // top right (└)
-            if top && right {
-                println!("{},{} => └", x, y);
-                corner += 1;
-            }
+        // see https://www.reddit.com/r/adventofcode/comments/1hcpyic/comment/m1q437r
+        if !top_left && top == left {
+            corner += 1;
+        }
+        if top_left && !top && !left {
+            corner += 1;
         }
 
-        // check if current cell is a corner
-        // there is 4 type of corner
-        // bottom left (┐)
+        if !top_right && top == right {
+            corner += 1;
+        }
+        if top_right && !top && !right {
+            corner += 1;
+        }
+
+        if !bottom_left && bottom == left {
+            corner += 1;
+        }
+        if bottom_left && !bottom && !left {
+            corner += 1;
+        }
+
+        if !bottom_right && bottom == right {
+            corner += 1;
+        }
+        if bottom_right && !bottom && !right {
+            corner += 1;
+        }
     }
 
-    return (region.len(), corner);
+    return corner;
 }
