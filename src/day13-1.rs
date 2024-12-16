@@ -32,6 +32,7 @@ fn main() {
             b_x,
             b_y,
         });
+        lines.next();
     }
 
     let mut token_count = 0;
@@ -54,6 +55,7 @@ fn main() {
 
 fn parse_line(s: String) -> (u64, u64) {
     // s = "Button A: X+15, Y+61"
+    println!("{}", s);
     let s = s.split(": ").nth(1).expect("failed to parse button line");
     // s ="X+15, Y+61"
     let s = s.split(", ");

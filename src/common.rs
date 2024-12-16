@@ -22,7 +22,7 @@ pub fn load_lines(default_file: &str) -> Vec<String> {
         .lines()
         .map(|l| l.expect("failed to read line"))
         .map(|l| l.trim().to_string())
-        .filter(|l| *l != "")
+        // .filter(|l| *l != "")
         .collect();
     return lines;
 }
