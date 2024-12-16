@@ -21,22 +21,6 @@ enum Move {
 type Cell = (isize, isize);
 type Grid = Vec<Vec<CellType>>;
 
-fn print_grid(grid: &Grid) {
-    let grid_height = grid.len();
-    let grid_width = grid[0].len();
-    for y in 0..grid_height {
-        for x in 0..grid_width {
-            match grid[y][x] {
-                CellType::CRATE => print!("O"),
-                CellType::EMPTY => print!("."),
-                CellType::ROBOT => print!("@"),
-                CellType::WALL => print!("#"),
-            }
-        }
-        print!("\n");
-    }
-}
-
 fn main() {
     let mut robots: Vec<String> = common::load_lines("inputs/day15.txt");
     let empty_line_index = robots
