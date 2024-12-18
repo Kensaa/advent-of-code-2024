@@ -1,5 +1,3 @@
-use std::collections::VecDeque;
-
 mod common;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -19,7 +17,11 @@ enum Move {
 }
 
 type Cell = (isize, isize);
-type Grid = Vec<Vec<CellType>>;
+struct Grid {
+    grid: Vec<Vec<CellType>>,
+    robot_x: usize,
+    robot_y: usize,
+}
 
 fn main() {
     let mut robots: Vec<String> = common::load_lines("inputs/day15.txt");
@@ -31,7 +33,7 @@ fn main() {
     let moves = robots.split_off(empty_line_index + 1);
     robots.pop();
 
-    let mut grid: Grid = robots
+    let grid: Vec<Vec<CellType>> = robots
         .into_iter()
         .map(|line| {
             line.chars()
@@ -51,20 +53,26 @@ fn main() {
     let grid_height = grid.len();
     let grid_width = grid[0].len();
 
-    let mut robot_x = -1;
-    let mut robot_y = -1;
+    let mut robot_x = usize::MAX;
+    let mut robot_y = usize::MAX;
     for y in 0..grid_height {
         for x in 0..grid_width {
             if let CellType::ROBOT = grid[y][x] {
-                robot_x = x as isize;
-                robot_y = y as isize;
+                robot_x = x;
+                robot_y = y;
             }
         }
     }
 
-    if robot_x == -1 || robot_y == -1 {
+    if robot_x == usize::MAX || robot_y == usize::MAX {
         panic!("invalid input data");
     }
+
+    let mut grid = Grid {
+        grid,
+        robot_x,
+        robot_y,
+    };
 
     let moves: Vec<Move> = moves
         .into_iter()
@@ -84,39 +92,15 @@ fn main() {
         .flatten()
         .collect();
 
-    // print_grid(&grid);
     for m in moves {
-        // println!("MOVE : {:?}", m);
-        let mut next = next_cell((robot_x as isize, robot_y as isize), m);
-        let mut next_c = grid[next.1 as usize][next.0 as usize];
-        let mut move_stack: VecDeque<Cell> = VecDeque::new();
-        move_stack.push_front((robot_x as isize, robot_y as isize));
-
-        while cell_in_grid(&grid, next) && next_c != CellType::EMPTY && next_c != CellType::WALL {
-            move_stack.push_front(next);
-
-            next = next_cell(next, m);
-            next_c = grid[next.1 as usize][next.0 as usize];
-        }
-
-        while let Some(cell) = move_stack.pop_front() {
-            let n = next_cell(cell, m);
-            if grid[n.1 as usize][n.0 as usize] == CellType::EMPTY {
-                grid[n.1 as usize][n.0 as usize] = grid[cell.1 as usize][cell.0 as usize];
-                grid[cell.1 as usize][cell.0 as usize] = CellType::EMPTY;
-                if grid[n.1 as usize][n.0 as usize] == CellType::ROBOT {
-                    robot_x = n.0;
-                    robot_y = n.1;
-                }
-            }
-        }
-        // print_grid(&grid);
+        let robot = (grid.robot_x as isize, grid.robot_y as isize);
+        move_cell(&mut grid, robot, m);
     }
 
     let mut sum = 0;
     for y in 0..grid_height {
         for x in 0..grid_width {
-            if grid[y][x] == CellType::CRATE {
+            if grid.grid[y][x] == CellType::CRATE {
                 sum += x as u32 + y as u32 * 100;
             }
         }
@@ -125,9 +109,35 @@ fn main() {
     println!("{}", sum);
 }
 
+fn move_cell(grid: &mut Grid, cell: Cell, m: Move) {
+    let next = next_cell(cell, m);
+    if !cell_in_grid(grid, next) {
+        return;
+    }
+
+    let next_x = next.0 as usize;
+    let next_y = next.1 as usize;
+    let curr_x = cell.0 as usize;
+    let curr_y = cell.1 as usize;
+
+    let next_c = grid.grid[next_y][next_x];
+    if next_c != CellType::EMPTY && next_c != CellType::WALL {
+        move_cell(grid, next, m);
+    }
+    let next_c = grid.grid[next_y][next_x];
+    if next_c == CellType::EMPTY {
+        grid.grid[next_y][next_x] = grid.grid[curr_y][curr_x];
+        grid.grid[curr_y][curr_x] = CellType::EMPTY;
+        if grid.grid[next_y][next_x] == CellType::ROBOT {
+            grid.robot_x = next_x;
+            grid.robot_y = next_y;
+        }
+    }
+}
+
 fn cell_in_grid(grid: &Grid, cell: Cell) -> bool {
-    let grid_height = grid.len();
-    let grid_width = grid[0].len();
+    let grid_height = grid.grid.len();
+    let grid_width = grid.grid[0].len();
 
     return !(cell.0 < 0
         || cell.0 >= grid_width as isize
