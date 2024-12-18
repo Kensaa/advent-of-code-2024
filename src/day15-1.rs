@@ -24,16 +24,16 @@ struct Grid {
 }
 
 fn main() {
-    let mut robots: Vec<String> = common::load_lines("inputs/day15.txt");
-    let empty_line_index = robots
+    let mut lines: Vec<String> = common::load_lines("inputs/day15.txt");
+    let empty_line_index = lines
         .iter()
         .position(|l| l == "")
         .expect("failed to parse input file");
 
-    let moves = robots.split_off(empty_line_index + 1);
-    robots.pop();
+    let moves = lines.split_off(empty_line_index + 1);
+    lines.pop();
 
-    let grid: Vec<Vec<CellType>> = robots
+    let grid: Vec<Vec<CellType>> = lines
         .into_iter()
         .map(|line| {
             line.chars()
