@@ -47,13 +47,6 @@ impl Direction {
 
 type Cell = (usize, usize);
 
-#[derive(Debug)]
-struct Node {
-    pos: Cell,
-    dir: Direction,
-    cost: u32,
-}
-
 fn main() {
     let lines: Vec<String> = common::load_lines("inputs/day16.txt");
 
@@ -119,11 +112,7 @@ fn main() {
         open_set.swap_remove(lowest_index);
         if current.0 == grid.end {
             // lets gooooo
-            // println!("path found :{:?}", came_from);
-            let path = build_path(came_from, current);
-            // println!("path found : {:?}", path);
             println!("cost : {}", g_scores.get(&(end_x, end_y)).unwrap());
-            // print_grid_with_path(&grid, &path);
             break;
         }
 
@@ -151,46 +140,6 @@ fn main() {
             }
         }
     }
-}
-
-fn print_grid_with_path(grid: &Grid, path: &HashMap<Cell, Direction>) {
-    let grid_height = grid.grid.len();
-    let grid_width = grid.grid[0].len();
-    for y in 0..grid_height {
-        for x in 0..grid_width {
-            let cell = grid.grid[y][x];
-            let is_in_path = path.contains_key(&(x, y));
-            if is_in_path {
-                let path_dir = path.get(&(x, y)).unwrap();
-                match path_dir {
-                    Direction::NORTH => print!("^"),
-                    Direction::EAST => print!(">"),
-                    Direction::SOUTH => print!("v"),
-                    Direction::WEST => print!("<"),
-                }
-            } else {
-                match cell {
-                    CellType::EMPTY => print!("."),
-                    CellType::WALL => print!("#"),
-                }
-            }
-        }
-        print!("\n");
-    }
-}
-
-fn build_path(
-    came_from: HashMap<(Cell, Direction), (Cell, Direction)>,
-    current: (Cell, Direction),
-) -> HashMap<Cell, Direction> {
-    let mut curr = current;
-    let mut path = HashMap::new();
-    path.insert(curr.0, curr.1);
-    while came_from.contains_key(&curr) {
-        curr = *came_from.get(&curr).unwrap();
-        path.insert(curr.0, curr.1);
-    }
-    return path;
 }
 
 fn dist(cell_1: Cell, cell_2: Cell) -> u32 {
